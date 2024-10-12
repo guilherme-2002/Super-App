@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"  # Mapeia a porta 8080 do host para a porta 8080 do contêiner
+    volumes:
+      - .:/app  # Monta o diretório atual no contêiner para desenvolvimento em tempo real.
+      - ./instance:/app/instance  # Monta o diretório do banco de dados SQLite.
+    environment:
+      - DATABASE_URI=sqlite:///instance/usersdb.sqlite3  # Usar SQLite por padrão.
+      - ADMIN_USERNAME=admin  # Nome padrão do administrador.
+      - ADMIN_PASSWORD=password  # Senha padrão do administrador.
+
+  db:
+    image: mysql  # Usando MySQL como segundo contêiner.
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # Senha do root MySQL.
+      MYSQL_DATABASE: usersdb  # Nome do banco de dados.
+      MYSQL_USER: user  # Nome do usuário.
+      MYSQL_PASSWORD: userpassword  # Senha do usuário.
+    volumes:
+      - db_data:/var/lib/mysql  # Persistência dos dados do MySQL.
+
+volumes:
+  db_data:
